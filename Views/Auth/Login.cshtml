@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Iniciar Sesión";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Login - Gestión de Envíos</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4>Gestión de Envíos</h4>
+                        <small>Ingresa tus credenciales</small>
+                    </div>
+                    <div class="card-body">
+
+                        @if (ViewBag.Error != null)
+                        {
+                            <div class="alert alert-danger">@ViewBag.Error</div>
+                        }
+
+                        <form method="post">
+                            <div class="mb-3">
+                                <label>Usuario</label>
+                                <input type="text" name="username"
+                                       class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label>Contraseña</label>
+                                <input type="password" name="password"
+                                       class="form-control" required />
+                            </div>
+                            <button type="submit"
+                                    class="btn btn-primary w-100">
+                                Ingresar
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+                <p class="text-center mt-3 text-muted">
+                    Usuario: admin | Contraseña: Admin123
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

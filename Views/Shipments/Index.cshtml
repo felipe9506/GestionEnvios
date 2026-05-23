@@ -1,0 +1,72 @@
+﻿@model IEnumerable<GestionEnvios.Models.Shipment>
+
+@{
+    ViewData["Title"] = "Lista de Envíos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Envíos Registrados</h2>
+    <a asp-action="Create" class="btn btn-success">+ Nuevo Envío</a>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Tracking</th>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Remitente</th>
+            <th>Destinatario</th>
+            <th>Peso (kg)</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var shipment in Model)
+        {
+            <tr>
+                <td>@shipment.TrackingNumber</td>
+                <td>@shipment.PaisOrigen - @shipment.CiudadOrigen</td>
+                <td>@shipment.PaisDestino - @shipment.CiudadDestino</td>
+                <td>@shipment.NombreRemitente</td>
+                <td>@shipment.NombreDestinatario</td>
+                <td>@shipment.PesoKg</td>
+                <td>
+                    @{
+                        var badge = shipment.Estado switch
+                        {
+                            "Creado" => "badge bg-secondary",
+                            "En tránsito" => "badge bg-primary",
+                            "Entregado" => "badge bg-success",
+                            "Cancelado" => "badge bg-danger",
+                            _ => "badge bg-secondary"
+                        };
+                    }
+                    <span class="@badge">@shipment.Estado</span>
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@shipment.Id"
+                       class="btn btn-sm btn-info">Ver</a>
+
+                    @if (shipment.Estado != "Entregado" && shipment.Estado != "Cancelado")
+                    {
+                        <a asp-action="Edit" asp-route-id="@shipment.Id"
+                           class="btn btn-sm btn-warning">Editar</a>
+
+                        <a asp-action="Cancel" asp-route-id="@shipment.Id"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('¿Cancelar este envío?')">
+                            Cancelar
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

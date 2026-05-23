@@ -1,0 +1,87 @@
+﻿@model GestionEnvios.Models.Shipment
+
+@{
+    ViewData["Title"] = "Nuevo Envío";
+}
+
+<h2>Registrar Nuevo Envío</h2>
+<hr />
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values
+            .SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
+<form method="post">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label>Número de Guía</label>
+            <input asp-for="TrackingNumber" class="form-control" required />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>Peso (kg)</label>
+            <input asp-for="PesoKg" type="number" step="0.01"
+                   min="0.01" class="form-control" required />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label>País Origen</label>
+            <input asp-for="PaisOrigen" class="form-control" required />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>País Destino</label>
+            <input asp-for="PaisDestino" class="form-control" required />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label>Ciudad Origen</label>
+            <input asp-for="CiudadOrigen" class="form-control" required />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>Ciudad Destino</label>
+            <input asp-for="CiudadDestino" class="form-control" required />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label>Nombre Remitente</label>
+            <input asp-for="NombreRemitente" class="form-control" required />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>Nombre Destinatario</label>
+            <input asp-for="NombreDestinatario" class="form-control" required />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Descripción de la Mercancía</label>
+        <textarea asp-for="DescripcionMercancia"
+                  class="form-control" rows="3" required></textarea>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label>Estado</label>
+            <select asp-for="Estado" class="form-select">
+                <option value="Creado">Creado</option>
+                <option value="En tránsito">En tránsito</option>
+                <option value="Entregado">Entregado</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>Fecha Estimada de Entrega</label>
+            <input asp-for="FechaEstimadaEntrega" type="date"
+                   class="form-control" required />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar Envío</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
