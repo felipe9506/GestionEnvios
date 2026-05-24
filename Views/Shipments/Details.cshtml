@@ -1,0 +1,84 @@
+﻿@model GestionEnvios.Models.Shipment
+
+@{
+    ViewData["Title"] = "Detalle del Envío";
+}
+
+<h2>Detalle del Envío</h2>
+<hr />
+
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        <h5>@Model.TrackingNumber</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-muted">Origen</h6>
+                <p><strong>País:</strong> @Model.PaisOrigen</p>
+                <p><strong>Ciudad:</strong> @Model.CiudadOrigen</p>
+                <p><strong>Remitente:</strong> @Model.NombreRemitente</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Destino</h6>
+                <p><strong>País:</strong> @Model.PaisDestino</p>
+                <p><strong>Ciudad:</strong> @Model.CiudadDestino</p>
+                <p><strong>Destinatario:</strong> @Model.NombreDestinatario</p>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-4">
+                <p><strong>Mercancía:</strong> @Model.DescripcionMercancia</p>
+            </div>
+            <div class="col-md-4">
+                <p><strong>Peso:</strong> @Model.PesoKg kg</p>
+            </div>
+            <div class="col-md-4">
+                <p>
+                    <strong>Estado:</strong>
+                    @{
+                        var badge = Model.Estado switch
+                        {
+                            "Creado" => "badge bg-secondary",
+                            "En tránsito" => "badge bg-primary",
+                            "Entregado" => "badge bg-success",
+                            "Cancelado" => "badge bg-danger",
+                            _ => "badge bg-secondary"
+                        };
+                    }
+                    <span class="@badge">@Model.Estado</span>
+                </p>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-6">
+                <p>
+                    <strong>Fecha Creación:</strong>
+                    @Model.FechaCreacion.ToString("dd/MM/yyyy")
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p>
+                    <strong>Fecha Estimada Entrega:</strong>
+                    @Model.FechaEstimadaEntrega.ToString("dd/MM/yyyy")
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    @if (Model.Estado != "Entregado" && Model.Estado != "Cancelado")
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id"
+           class="btn btn-warning">Editar</a>
+        <a asp-action="Cancel" asp-route-id="@Model.Id"
+           class="btn btn-danger"
+           onclick="return confirm('¿Cancelar este envío?')">
+            Cancelar
+        </a>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+</div>

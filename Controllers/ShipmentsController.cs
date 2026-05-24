@@ -6,6 +6,11 @@ namespace GestionEnvios.Controllers
 {
     public class ShipmentsController : Controller
     {
+        //Deslogueo
+        private bool EstaLogueado()
+        {
+            return HttpContext.Session.GetString("Usuario") != null;
+        }
         //constructor para inyectar el contexto de la base de datos
         private readonly AppDbContext _context;
         //El DBContext se inyecta a través del constructor para que el controlador pueda acceder a la base de datos y realizar operaciones CRUD en la tabla de envíos.
@@ -21,6 +26,7 @@ namespace GestionEnvios.Controllers
         //acción para mostrar la lista de envíos
         public async Task<IActionResult> Index()
         {
+            if (!EstaLogueado()) return RedirectToAction("Login", "Auth");
             var shipments = await _context.Shipments.ToListAsync();
             return View(shipments);
 
@@ -28,6 +34,7 @@ namespace GestionEnvios.Controllers
         //acción para mostrar el formulario de creación de un nuevo envío
         public IActionResult Create()
         {
+            if (!EstaLogueado()) return RedirectToAction("Login", "Auth");
             return View();
         }
         [HttpPost]
@@ -53,6 +60,7 @@ namespace GestionEnvios.Controllers
         //acción para mostrar los detalles de un envío específico
         public async Task<IActionResult> Details(int id)
         {
+            if (!EstaLogueado()) return RedirectToAction("Login", "Auth");
             var shipment = await _context.Shipments.FindAsync(id);
             if (shipment == null)
             {
@@ -63,6 +71,7 @@ namespace GestionEnvios.Controllers
         //acción para mostrar el formulario de edición de un envío existente
         public async Task<IActionResult> Edit(int id)
         {
+            if (!EstaLogueado()) return RedirectToAction("Login", "Auth");
             var shipment = await _context.Shipments.FindAsync(id);
             if (shipment == null)
             {
@@ -80,38 +89,40 @@ namespace GestionEnvios.Controllers
         //acción para guardar los cambios de edicion
         public async Task<IActionResult> Edit(int id, Shipment shipment)
         {
-            
+            if (!EstaLogueado()) return RedirectToAction("Login", "Auth");
             var envio = await _context.Shipments.FindAsync(id);
-            if (shipment == null) 
-            {
-                return NotFound(); 
-            }
-            if(shipment.PaisOrigen == shipment.PaisDestino)
-            {
-                ModelState.AddModelError("", "El país de destino no puede ser el mismo que el país de origen.");
-                return View(shipment);
-            }
-            if (!ModelState.IsValid)
-            {
-                envio.PaisOrigen = shipment.PaisOrigen;
-                envio.PaisDestino = shipment.PaisDestino;
-                envio.CiudadOrigen = shipment.CiudadOrigen;
-                envio.CiudadDestino = shipment.CiudadDestino;
-                envio.NombreRemitente = shipment.NombreRemitente;
-                envio.NombreDestinatario = shipment.NombreDestinatario;
-                envio.DescripcionMercancia = shipment.DescripcionMercancia;
-                envio.PesoKg = shipment.PesoKg;
-                envio.Estado = shipment.Estado;
-                envio.FechaEstimadaEntrega = shipment.FechaEstimadaEntrega;
+            if (envio == null) return NotFound();
 
-                await _context.SaveChangesAsync();
+            if (shipment.PaisOrigen == shipment.PaisDestino)
+            {
+                ModelState.AddModelError("", "El país de origen no puede ser igual al de destino");
                 return View(shipment);
             }
-            return View(shipment);
+
+            if (shipment.FechaEstimadaEntrega < envio.FechaCreacion)
+            {
+                ModelState.AddModelError("", "La fecha de entrega no puede ser anterior a la de creación");
+                return View(shipment);
+            }
+
+            envio.PaisOrigen = shipment.PaisOrigen;
+            envio.PaisDestino = shipment.PaisDestino;
+            envio.CiudadOrigen = shipment.CiudadOrigen;
+            envio.CiudadDestino = shipment.CiudadDestino;
+            envio.NombreRemitente = shipment.NombreRemitente;
+            envio.NombreDestinatario = shipment.NombreDestinatario;
+            envio.DescripcionMercancia = shipment.DescripcionMercancia;
+            envio.PesoKg = shipment.PesoKg;
+            envio.Estado = shipment.Estado;
+            envio.FechaEstimadaEntrega = shipment.FechaEstimadaEntrega;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
         //accion paara cancelar un envio
         public async Task<IActionResult> Cancel(int id)
         {
+            if (!EstaLogueado()) return RedirectToAction("Login", "Auth");
             var shipment = await _context.Shipments.FindAsync(id);
             if (shipment == null) return NotFound();
 
