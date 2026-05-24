@@ -24,10 +24,26 @@ namespace GestionEnvios.Controllers
             return View(shipments);
         }
         //acción para mostrar la lista de envíos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool mostrarCancelados = false)
         {
             if (!EstaLogueado()) return RedirectToAction("Login", "Auth");
             var shipments = await _context.Shipments.ToListAsync();
+            if (mostrarCancelados)
+            {
+                // SQL directo — trae TODOS incluyendo cancelados
+                shipments = await _context.Shipments
+                    .FromSqlRaw("SELECT * FROM Shipments")
+                    .ToListAsync();
+            }
+            else
+            {
+                // SQL directo — oculta los cancelados por defecto
+                shipments = await _context.Shipments
+                    .FromSqlRaw("SELECT * FROM Shipments WHERE Estado != 'Cancelado'")
+                    .ToListAsync();
+            }
+
+            ViewBag.MostrandoCancelados = mostrarCancelados;
             return View(shipments);
 
         }

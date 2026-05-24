@@ -6,7 +6,19 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Envíos Registrados</h2>
-    <a asp-action="Create" class="btn btn-success">+ Nuevo Envío</a>
+    <div>
+        @if (ViewBag.MostrandoCancelados)
+        {
+            <a asp-action="Index" asp-route-mostrarCancelados="false"
+               class="btn btn-secondary me-2">Ocultar Cancelados</a>
+        }
+        else
+        {
+            <a asp-action="Index" asp-route-mostrarCancelados="true"
+               class="btn btn-outline-danger me-2">Mostrar Cancelados</a>
+        }
+        <a asp-action="Create" class="btn btn-success">+ Nuevo Envío</a>
+    </div>
 </div>
 
 @if (TempData["Error"] != null)
